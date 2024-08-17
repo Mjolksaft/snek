@@ -9,7 +9,8 @@ export default class Vector {
     }
 
     static angle(v1, v2) {
-        return Math.atan2(v2.y - v1.y, v2.x - v1.x);
+        
+        return Math.atan2(v1.y - v2.y, v1.x - v2.x);
     }
 
     static fromAngle(angle, length) {
