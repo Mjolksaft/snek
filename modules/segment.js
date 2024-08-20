@@ -21,7 +21,7 @@ export default class Segment {
         ctx.fillStyle = 'black'
         ctx.beginPath()
         ctx.arc(this.pos.x, this.pos.y, this.size, 0, Math.PI * 2, false)
-        ctx.fill()
-        
+        ctx.stroke();
     }
+    
 }

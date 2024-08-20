@@ -5,7 +5,7 @@ export default class Spine {
     constructor(sizes, startPos, maxDistance) {
         this.segments = []
         this.maxDistance = maxDistance
-        this.maxAngle = Math.PI / 2
+        this.maxAngle = Math.PI / 4
         for (let i = 0; i < sizes.length; i++) {
             const size = sizes[i];
             const pos = new Vector(startPos.x, startPos.y - maxDistance * i)
@@ -18,8 +18,9 @@ export default class Spine {
             let A = targetPos
             let B = this.segments[0].pos
             let C = this.segments[1].pos 
+            
             this.adjustAngleAndRotate(A, B, C, true, false);
-    
+            
             // rest of the cases
             for (let i = 1; i < this.segments.length - 1; i++) {
                 A = this.segments[i - 1].pos
@@ -34,7 +35,9 @@ export default class Spine {
             const nextElement = this.segments[i + 1];
             this.constrainDistance(element, nextElement);
         }
+
         
+        this.segments[0].angle = Vector.angle(targetPos, this.segments[0].pos)
         this.segments[0].pos = targetPos
     }
 
@@ -45,6 +48,7 @@ export default class Spine {
             const angle = Vector.angle(element.pos, nextElement.pos)
             nextElement.pos.x = element.pos.x - this.maxDistance * Math.cos(angle)
             nextElement.pos.y = element.pos.y - this.maxDistance * Math.sin(angle)
+            nextElement.angle = angle
         }
     }
 
@@ -78,6 +82,7 @@ export default class Spine {
         // Update the original point's coordinates
         point.x = rotatedX;
         point.y = rotatedY;
+
     }
 
     relativeAngle(AB, BC) {

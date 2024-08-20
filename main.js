@@ -33,8 +33,8 @@ function gameLoop(currentTime) {
     ctx.fillRect(0, 0, width, height);
 
     // Draw the snake
-    snake.draw(ctx);
     snake.update();
+    snake.draw(ctx);
 
     // Draw FPS on the canvas
     ctx.fillStyle = "black";
