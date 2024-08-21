@@ -2,17 +2,21 @@ import Spine from "./Spine.js";
 import Spline from "./spline.js";
 import Vector from "./Vector.js";
 
-export default class Snake {
+export default class Fly {
     constructor(startPos) {
         this.pos = startPos;
-        this.spine = new Spine([20, 20, 20, 20, 20, 20,20,20,20,20,20 ,20,20,20,20,20,20], startPos, 20);
-        this.speed = 1;
+        this.spine = new Spine([15, 5, 15, 15, 5, 8, 5, 5, 5, 5, 5, 5, 5, 5], startPos, 15);
+        this.speed = 2;
         this.head = this.spine.segments[0];
 
         this.points = []
 
         this.mousePos = new Vector(260, 250);
         this.targetPos = startPos;
+
+        this.flapSpeed = 0.05; // Controls the speed of the flapping
+        this.flapAmplitude = Math.PI / 8; // Controls how much the fins flap
+        this.time = 0;
 
         window.addEventListener('mousemove', (event) => {
             this.mousePos = new Vector(event.clientX, event.clientY);
@@ -23,9 +27,10 @@ export default class Snake {
         this.targetPos = this.calculateTargetPosition();
         if (this.targetPos) {
             this.spine.update(this.targetPos);
-            
+
         }
         this.drawingPoints()
+        this.time += this.flapSpeed;
     }
 
     calculateTargetPosition() {
@@ -105,7 +110,7 @@ export default class Snake {
         ctx.lineWidth = 4;
         let line = Spline.generateSplinePoints(this.points, 20)
         // Draw the spline
-        ctx.fillStyle = "green"
+        ctx.fillStyle = "lightBlue"
         ctx.beginPath();
         ctx.moveTo(line[0].x, line[0].y);
         for (let i = 1; i < line.length; i++) {
@@ -117,30 +122,55 @@ export default class Snake {
         //draw eyes     
         let length = this.head.size - 5;
         let angle = this.head.angle;
-        let adjustment = Math.PI/2
+        let adjustment = Math.PI / 2
         let pos = this.head.pos;
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = 'grey';
         ctx.beginPath()
-        ctx.arc(           
-            pos.x + Math.cos(angle- adjustment) * length,
-            pos.y + Math.sin(angle- adjustment) * length,
-            2,
+        ctx.arc(
+            pos.x + Math.cos(angle - adjustment) * length,
+            pos.y + Math.sin(angle - adjustment) * length,
+            10,
             0,
-            Math.PI*2
+            Math.PI * 2
         );
         ctx.fill()
 
         ctx.beginPath()
-        ctx.arc(           
-            pos.x + Math.cos(angle+ adjustment) * length,
-            pos.y + Math.sin(angle+ adjustment) * length,
-            2,
+        ctx.arc(
+            pos.x + Math.cos(angle + adjustment) * length,
+            pos.y + Math.sin(angle + adjustment) * length,
+            10,
             0,
-            Math.PI*2
+            Math.PI * 2
         );
         ctx.fill()
 
-        // draw legs
 
+        const drawFin = (direction, rotationAngle) => {
+            const flapAngle = Math.sin(this.time*4) * this.flapAmplitude;
+            
+            const segment = this.spine.segments[3];
+            
+            ctx.save();
+            
+            ctx.translate(segment.pos.x, segment.pos.y);
+            
+            ctx.rotate(segment.angle + rotationAngle + flapAngle * direction);
+            
+            ctx.beginPath();
+            ctx.ellipse(50, 0, 40, 10, 0, 0, Math.PI * 2); // Center ellipse at (0, 0)
+            ctx.fill();
+            
+            ctx.restore();
+        };
+        
+        // Example usage:
+        const finSize = 40;
+        drawFin(1, Math.PI / 2); 
+        drawFin(-1, -Math.PI/2); 
+        drawFin(1,  Math.PI / 1.5); 
+        drawFin(-1,  -Math.PI / 1.5);
     }
+
+    
 }

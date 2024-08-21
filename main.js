@@ -1,3 +1,5 @@
+import Fly from "./modules/fly.js";
+import Lizard from "./modules/lizard.js";
 import Snake from "./modules/Snake.js";
 import Vector from "./modules/Vector.js";
 
@@ -17,7 +19,7 @@ function setup() {
     canvas.width = width;
     canvas.height = height;
 
-    snake = new Snake(new Vector(250, 250));
+    snake = new Fly(new Vector(250, 250));
     
     requestAnimationFrame(gameLoop);
 }

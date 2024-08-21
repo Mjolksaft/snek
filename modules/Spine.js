@@ -1,16 +1,30 @@
+import Limb from "./limb.js";
 import Segment from "./Segment.js";
 import Vector from "./Vector.js";
 
 export default class Spine {
-    constructor(sizes, startPos, maxDistance) {
+    constructor(sizes, startPos, maxDistance, legs = null) {
         this.segments = []
         this.maxDistance = maxDistance
         this.maxAngle = Math.PI / 4
+        this.turn = true
+
         for (let i = 0; i < sizes.length; i++) {
             const size = sizes[i];
-            const pos = new Vector(startPos.x, startPos.y - maxDistance * i)
+            const pos = new Vector(startPos.x - maxDistance * i, startPos.y)
             this.segments.push(new Segment(pos, size))
         }
+
+        this.legs = []
+        if (legs) {
+            for (let i = 0; i < legs.length; i++) {
+                console.log(legs[i]);
+                
+                this.legs.push(new Limb(3, this.segments[legs[i]], 1, legs[i]))            
+                this.legs.push(new Limb(3, this.segments[legs[i]], -1, legs[i]))            
+            }
+        }
+        
     }
 
     update(targetPos) {
@@ -39,7 +53,16 @@ export default class Spine {
         
         this.segments[0].angle = Vector.angle(targetPos, this.segments[0].pos)
         this.segments[0].pos = targetPos
+
+        
+        for (let i = 0; i < this.legs.length; i++) {
+            const leg = this.legs[i];
+            leg.move(this.segments[leg.index])
+            leg.update()
+        }
     }
+
+    
 
     constrainDistance(element, nextElement) {
         const distance = Vector.distance(element.pos, nextElement.pos)
@@ -101,12 +124,17 @@ export default class Spine {
     }
 
     draw(ctx) {
-
-        for (let i = 0; i < this.segments.length; i++) {
-            const element = this.segments[i];
-            element.draw(ctx)
-
+        for (let i = 0; i < this.legs.length; i++) {
+            const leg = this.legs[i];
+            leg.draw(ctx)
         }
+        // ctx.lineWidth = 1
+        // ctx.strokeStyle = "black"
+        // for (let i = 0; i < this.segments.length; i++) {
+        //     const element = this.segments[i];
+        //     element.draw(ctx)
+
+        // }
 
     }
 }

@@ -2,14 +2,16 @@ import Spine from "./Spine.js";
 import Spline from "./spline.js";
 import Vector from "./Vector.js";
 
-export default class Snake {
+export default class Lizard {
     constructor(startPos) {
         this.pos = startPos;
-        this.spine = new Spine([20, 20, 20, 20, 20, 20,20,20,20,20,20 ,20,20,20,20,20,20], startPos, 20);
+
+        this.spine = new Spine([20, 20, 15, 17, 20, 20, 15, 7, 5, 5,4,3,2,1], startPos, 20, [3,6]);
         this.speed = 1;
         this.head = this.spine.segments[0];
 
-        this.points = []
+        this.legPoints = []
+        this.bodyPoints = []
 
         this.mousePos = new Vector(260, 250);
         this.targetPos = startPos;
@@ -96,16 +98,23 @@ export default class Snake {
 
         newPoints.push(...newPoints.slice(0, 3)); // add the neccessary points to make a loop
 
-        this.points = newPoints
+        this.bodyPoints = newPoints
+
+
+        // for the legs
+
+
+        
+
 
     }
 
     draw(ctx) {
-        // this.spine.draw(ctx)
-        ctx.lineWidth = 4;
-        let line = Spline.generateSplinePoints(this.points, 20)
+        this.spine.draw(ctx)
+
+        let line = Spline.generateSplinePoints(this.bodyPoints, 20)
         // Draw the spline
-        ctx.fillStyle = "green"
+        ctx.fillStyle = "brown"
         ctx.beginPath();
         ctx.moveTo(line[0].x, line[0].y);
         for (let i = 1; i < line.length; i++) {
