@@ -6,8 +6,8 @@ export default class Lizard {
     constructor(startPos) {
         this.pos = startPos;
 
-        this.spine = new Spine([20, 20, 15, 17, 20, 20, 15, 7, 5, 5,4,3,2,1], startPos, 20, [3]);
-        this.speed = 0.5;
+        this.spine = new Spine([20, 20, 15, 17, 20, 20, 15, 7, 5, 5,4,3,2,1], startPos, 20, [3,6]);
+        this.speed = 0.1;
         this.head = this.spine.segments[0];
 
         this.legPoints = []
@@ -112,42 +112,42 @@ export default class Lizard {
     draw(ctx) {
         this.spine.draw(ctx)
 
-        // let line = Spline.generateSplinePoints(this.bodyPoints, 20)
-        // // Draw the spline
-        // ctx.fillStyle = "brown"
-        // ctx.beginPath();
-        // ctx.moveTo(line[0].x, line[0].y);
-        // for (let i = 1; i < line.length; i++) {
-        //     ctx.lineTo(line[i].x, line[i].y);
-        // }
-        // ctx.fill();
-        // ctx.stroke()
+        let line = Spline.generateSplinePoints(this.bodyPoints, 20)
+        // Draw the spline
+        ctx.fillStyle = "brown"
+        ctx.beginPath();
+        ctx.moveTo(line[0].x, line[0].y);
+        for (let i = 1; i < line.length; i++) {
+            ctx.lineTo(line[i].x, line[i].y);
+        }
+        ctx.fill();
+        ctx.stroke()
 
-        // //draw eyes     
-        // let length = this.head.size - 5;
-        // let angle = this.head.angle;
-        // let adjustment = Math.PI/2
-        // let pos = this.head.pos;
-        // ctx.fillStyle = 'red';
-        // ctx.beginPath()
-        // ctx.arc(           
-        //     pos.x + Math.cos(angle- adjustment) * length,
-        //     pos.y + Math.sin(angle- adjustment) * length,
-        //     2,
-        //     0,
-        //     Math.PI*2
-        // );
-        // ctx.fill()
+        //draw eyes     
+        let length = this.head.size - 5;
+        let angle = this.head.angle;
+        let adjustment = Math.PI/2
+        let pos = this.head.pos;
+        ctx.fillStyle = 'red';
+        ctx.beginPath()
+        ctx.arc(           
+            pos.x + Math.cos(angle- adjustment) * length,
+            pos.y + Math.sin(angle- adjustment) * length,
+            2,
+            0,
+            Math.PI*2
+        );
+        ctx.fill()
 
-        // ctx.beginPath()
-        // ctx.arc(           
-        //     pos.x + Math.cos(angle+ adjustment) * length,
-        //     pos.y + Math.sin(angle+ adjustment) * length,
-        //     2,
-        //     0,
-        //     Math.PI*2
-        // );
-        // ctx.fill()
+        ctx.beginPath()
+        ctx.arc(           
+            pos.x + Math.cos(angle+ adjustment) * length,
+            pos.y + Math.sin(angle+ adjustment) * length,
+            2,
+            0,
+            Math.PI*2
+        );
+        ctx.fill()
 
         // draw legs
 
