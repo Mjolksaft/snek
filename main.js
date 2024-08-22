@@ -19,7 +19,7 @@ function setup() {
     canvas.width = width;
     canvas.height = height;
 
-    snake = new Fly(new Vector(250, 250));
+    snake = new Lizard(new Vector(250, 250));
     
     requestAnimationFrame(gameLoop);
 }

@@ -5,9 +5,9 @@ export default class Limb {
     constructor(joints, rootPosition, orientation, index) {
         this.joints = [];
         for (let i = 0; i < joints; i++) {
-            this.joints.push(new Segment(new Vector(250, 250),5))
+            this.joints.push(new Segment(new Vector(250, 250), 5))
         }
-        
+
         this.orientation = orientation
         this.rootPosition = rootPosition
         this.index = index
@@ -15,44 +15,48 @@ export default class Limb {
         this.length = 30;
         this.target = new Vector(this.joints[0].pos.x + Math.cos(this.rootPosition.angle) * this.length, this.joints[0].pos.y + Math.sin(this.rootPosition.angle) * this.length);
         this.speed = 0.1;
-        this.newTarget = null;
-
+        this.canMove = true
         this.grounded = true
     }
 
     update() {
-        this.adjustTargetIfNeeded(this.target, this.rootPosition.pos, this.length * 2);
-            this.performForwardReaching(this.target);
-            this.performBackwardReaching(this.rootPosition.pos);
-            
-        if (this.newTarget) {
-            this.target = Vector.lerp(this.target, this.newTarget, this.speed);
-            this.updateMovementState()
+        //when do we move the target ? 
+        //how do we move the target ? 
+        // we move the target when out of range 
+        // when we have a new target and is allowed to move set the new target to the target and change canMove to false so we dont get a new position
+        // also check so that we are currently grounded when changing new target so we don move the limb when its not in the ground
+        let distance = Vector.distance(this.target, this.joints[this.joints.length-1].pos);
+        
+        let newTarget;
+        if (distance > 10) {
+            newTarget = this.moveTarget(this.rootPosition, this.length * 2)
+        } else {
+            this.grounded = true
         }
-    }
 
-    updateMovementState() {
-        //draw target
-        this.grounded = Vector.distance(this.target, this.newTarget) < 5
-        if (this.grounded) {
-            this.newTarget = null
-            
+        if (this.canMove && this.grounded && newTarget) {
+            this.target = newTarget
+            this.grounded = false
+            this.canMove = false
         }
+
+        // the part that moves the actual limb to the target 
+        // do we move the limb to the target or do we lerp it to the location
+        // we get the current location of the last joint and lerp it into the target 
+        const newPos = Vector.lerp(this.joints[this.joints.length - 1].pos, this.target, this.speed)
+        this.performForwardReaching(newPos);
+        this.performBackwardReaching(this.rootPosition.pos);
     }
 
-    move(newPos) {
-        this.rootPosition = newPos
+    setTarget(newTarget) {
+        this.target = newTarget
     }
-
-    adjustTargetIfNeeded(target, rootPosition, threshold) {
-        let distance = Vector.distance(target, rootPosition);
-        if (distance > threshold) {
-            
-            this.newTarget = new Vector(
-                rootPosition.x + Math.cos(this.rootPosition.angle - Math.PI/4 * this.orientation) * threshold,
-                rootPosition.y + Math.sin(this.rootPosition.angle - Math.PI/4 * this.orientation) * threshold
-            );
-        } 
+    
+    moveTarget(rootPosition, threshold) {
+        return new Vector(
+            rootPosition.pos.x + Math.cos(rootPosition.angle - Math.PI / 4 * this.orientation) * threshold,
+            rootPosition.pos.y + Math.sin(rootPosition.angle - Math.PI / 4 * this.orientation) * threshold
+        );
     }
 
     performForwardReaching(target) {
@@ -73,15 +77,20 @@ export default class Limb {
 
     draw(ctx) {
         ctx.strokeStyle = "black"
+
         // draw control points 
         for (let i = 0; i < this.joints.length; i++) {
+            if (i == 2) {
+                ctx.strokeStyle = "red"
+            }
             const joint = this.joints[i];
-            
+
             ctx.lineWidth = 2;
             ctx.beginPath()
             ctx.arc(joint.pos.x, joint.pos.y, joint.size, 0, Math.PI * 2)
             ctx.stroke()
         }
+        ctx.strokeStyle = "black"
 
         // draw Line between
         for (let i = 0; i < this.joints.length - 1; i++) {
@@ -104,12 +113,12 @@ export default class Limb {
         //     ctx.stroke()
 
         // }
-        
-        // if (this.grounded) {
-        //     ctx.strokeStyle = "green"
-        // } 
-        // ctx.beginPath()
-        // ctx.arc(this.target.x, this.target.y, 10, 0, Math.PI * 2)
-        // ctx.stroke()
+
+        if (this.grounded) {
+            ctx.strokeStyle = "green"
+        } 
+        ctx.beginPath()
+        ctx.arc(this.target.x, this.target.y, 10, 0, Math.PI * 2)
+        ctx.stroke()
     }
 }

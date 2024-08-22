@@ -6,8 +6,9 @@ export default class Spine {
     constructor(sizes, startPos, maxDistance, legs = null) {
         this.segments = []
         this.maxDistance = maxDistance
-        this.maxAngle = Math.PI / 4
+        this.maxAngle = Math.PI / 2
         this.turn = true
+        this.queue = [0,1]
 
         for (let i = 0; i < sizes.length; i++) {
             const size = sizes[i];
@@ -57,12 +58,23 @@ export default class Spine {
         
         for (let i = 0; i < this.legs.length; i++) {
             const leg = this.legs[i];
-            leg.move(this.segments[leg.index])
             leg.update()
         }
+
+        this.gait()
     }
 
-    
+    gait() {
+        const allGrounded = this.legs[0].grounded && this.legs[1].grounded
+        const cantMove = !this.legs[0].canMove && !this.legs[1].canMove
+
+        if (allGrounded && cantMove) {
+            //check the queue for the next index
+            let item = this.queue.shift()
+            this.legs[item].canMove = true
+            this.queue.push(item)  
+        }
+    }
 
     constrainDistance(element, nextElement) {
         const distance = Vector.distance(element.pos, nextElement.pos)
@@ -128,13 +140,13 @@ export default class Spine {
             const leg = this.legs[i];
             leg.draw(ctx)
         }
-        // ctx.lineWidth = 1
-        // ctx.strokeStyle = "black"
-        // for (let i = 0; i < this.segments.length; i++) {
-        //     const element = this.segments[i];
-        //     element.draw(ctx)
+        ctx.lineWidth = 1
+        ctx.strokeStyle = "black"
+        for (let i = 0; i < this.segments.length; i++) {
+            const element = this.segments[i];
+            element.draw(ctx)
 
-        // }
+        }
 
     }
 }
