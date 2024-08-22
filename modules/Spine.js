@@ -6,7 +6,7 @@ export default class Spine {
     constructor(sizes, startPos, maxDistance, legs = null) {
         this.segments = []
         this.maxDistance = maxDistance
-        this.maxAngle = Math.PI / 2
+        this.maxAngle = Math.PI / 4
         this.turn = true
         this.queue = []
 

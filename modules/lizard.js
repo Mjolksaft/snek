@@ -7,7 +7,7 @@ export default class Lizard {
         this.pos = startPos;
 
         this.spine = new Spine([20, 20, 15, 17, 20, 20, 15, 7, 5, 5,4,3,2,1], startPos, 20, [3,6]);
-        this.speed = 0.1;
+        this.speed = 1;
         this.head = this.spine.segments[0];
 
         this.legPoints = []

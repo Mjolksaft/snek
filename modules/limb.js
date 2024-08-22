@@ -14,7 +14,7 @@ export default class Limb {
 
         this.length = 30;
         this.target = new Vector(this.joints[0].pos.x + Math.cos(this.rootPosition.angle) * this.length, this.joints[0].pos.y + Math.sin(this.rootPosition.angle) * this.length);
-        this.speed = 0.05;
+        this.speed = 0.5;
         this.grounded = true
     }
 
@@ -77,14 +77,6 @@ export default class Limb {
             ctx.lineTo(next.pos.x - Math.cos(angle) * next.size, next.pos.y - Math.sin(angle) * next.size)
             ctx.stroke()
         }
-
-        // if (this.newTarget) {
-        //     //draw target
-        //     ctx.beginPath()
-        //     ctx.arc(this.newTarget.x, this.newTarget.y, 10, 0, Math.PI * 2)
-        //     ctx.stroke()
-
-        // }
 
         if (this.grounded) {
             ctx.strokeStyle = "green"
